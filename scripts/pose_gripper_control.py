@@ -18,27 +18,20 @@ def main():
     initial_pose = client.get_pose()
 
     def arm_callback(data):
-        print ns + " arm got target"
+        rospy.loginfo(rospy.get_caller_id() + " arm got target")
         print data
-        # for debugging
-        # data = copy.deepcopy(initial_pose)
-        # data.position.z += 0.1
         client.go_to_pose_goal(data)
-        global arm_ready
-        arm_ready = True
     
     def gripper_callback(data):
-        print(ns + " gripper got target...")
+        rospy.loginfo(rospy.get_caller_id() + " gripper got target %f" % data.data)
         client.move_gripper_to(data)
-        global gripper_ready
-        gripper_ready = True
 
     rospy.Subscriber("arm_target_pose", geometry_msgs.msg.Pose, arm_callback)
     rospy.Subscriber("gripper_target", std_msgs.msg.Float64, gripper_callback)
 
     while not rospy.is_shutdown():
         if arm_ready and gripper_ready:
-            print "========publish ready message"
+            rospy.loginfo(rospy.get_caller_id() + " publish ready message")
             msg = std_msgs.msg.Bool()
             msg.data = True
             ready_pub.publish(msg)

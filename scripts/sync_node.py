@@ -68,31 +68,31 @@ def main():
 
     def callback(event):
         global step
-        print event.current_expected
-        pose0 = geometry_msgs.msg.Pose()
-        pose0.position.x = panda0_traj_ee[step][0]
-        pose0.position.y = panda0_traj_ee[step][1]
-        pose0.position.z = panda0_traj_ee[step][2]
-        pose0.orientation.x = math.sqrt(2) / 2.0
-        pose0.orientation.y = math.sqrt(2) / 2.0
-        pose1 = geometry_msgs.msg.Pose()
-        pose1.position.x = panda1_traj_ee[step][0]
-        pose1.position.y = panda1_traj_ee[step][1]
-        pose1.position.z = panda1_traj_ee[step][2]
-        pose1.orientation.x = math.sqrt(2) / 2.0
-        pose1.orientation.y = math.sqrt(2) / 2.0
-        print "========publish target"
-        arm0_pose_pub.publish(pose0)    
-        arm1_pose_pub.publish(pose1)
-        gripper0_pub.publish(panda0_traj_gripper[step])
-        gripper1_pub.publish(panda1_traj_gripper[step])
-        step = step + 1
+        if step < len(panda0_traj_ee):
+            pose0 = geometry_msgs.msg.Pose()
+            pose0.position.x = panda0_traj_ee[step][0]
+            pose0.position.y = panda0_traj_ee[step][1]
+            pose0.position.z = panda0_traj_ee[step][2]
+            pose0.orientation.x = math.sqrt(2) / 2.0
+            pose0.orientation.y = math.sqrt(2) / 2.0
+            pose1 = geometry_msgs.msg.Pose()
+            pose1.position.x = panda1_traj_ee[step][0]
+            pose1.position.y = panda1_traj_ee[step][1]
+            pose1.position.z = panda1_traj_ee[step][2]
+            pose1.orientation.x = math.sqrt(2) / 2.0
+            pose1.orientation.y = math.sqrt(2) / 2.0
+            rospy.loginfo(rospy.get_caller_id() + "publish target %d", step)
+            arm0_pose_pub.publish(pose0)    
+            arm1_pose_pub.publish(pose1)
+            gripper0_pub.publish(panda0_traj_gripper[step])
+            gripper1_pub.publish(panda1_traj_gripper[step])
+            step = step + 1
 
     rospy.sleep(5)
     print "======Press Enter to start timer"
     raw_input()
-    timer = rospy.Timer(rospy.Duration(1.0 / 12), callback)
-    timer.run()
+    rospy.Timer(rospy.Duration(1.0 / 12), callback)
+    rospy.spin()
 
 if __name__ == "__main__":
     main()
