@@ -3,20 +3,23 @@
   <arg name="robot1_ip" unless="$(arg fake)" />
   <arg name="robot2_ip" unless="$(arg fake)" />
   <arg name="load_gripper" default="true" />
+  <arg name="launch_rviz" default="true" />
   <arg name="file_name"/>
+  <node name="sync_replay" pkg="panda_moveit_python" type="sync_node.py" respawn="false" output="screen" 
+   args="$(arg file_name)">
+  </node>
   <include ns="robot1" file="$(find panda_moveit_python)/launch/pose_gripper_control.launch">
     <arg name="fake" value="$(arg fake)" />
     <arg name="robot_ip" value="$(arg robot1_ip)" unless="$(arg fake)"/>
     <arg name="load_gripper" value="$(arg load_gripper)" />
+    <arg name="launch_rviz" value="$(arg launch_rviz)" />
     <arg name="ns" value="robot1" />
   </include>
   <include ns="robot2" file="$(find panda_moveit_python)/launch/pose_gripper_control.launch">
     <arg name="fake" value="$(arg fake)" />
     <arg name="robot_ip" value="$(arg robot2_ip)" unless="$(arg fake)"/>
     <arg name="load_gripper" value="$(arg load_gripper)" />
+    <arg name="launch_rviz" value="$(arg launch_rviz)" />
     <arg name="ns" value="robot2" />
   </include>
-  <node nane="sync_replay" pkg="panda_moveit_python" type="sync_node.py" respawn="false" output="screen" 
-   args="$(arg file_name)">
-  </node>
 </launch>

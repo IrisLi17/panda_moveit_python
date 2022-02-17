@@ -3,7 +3,7 @@
   <arg name="robot_ip" unless="$(arg fake)"/>
   <arg name="load_gripper" default="true"/>
   <arg name="ns" default="robot1"/>
-  <arg name="launch_rviz" default="true" unless="$(arg fake)"/>
+  <arg name="launch_rviz" default="true"/>
   <!--group ns="robot1"!-->
     <include file="$(find panda_moveit_python)/launch/fake_demo.launch" if="$(arg fake)">
     </include>
