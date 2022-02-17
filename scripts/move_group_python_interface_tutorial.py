@@ -81,7 +81,7 @@ def all_close(goal, actual, tolerance):
 
 class MoveGroupPythonIntefaceTutorial(object):
   """MoveGroupPythonIntefaceTutorial"""
-  def __init__(self, fake):
+  def __init__(self, fake, group_name="panda_arm", eef_link="panda_link8"):
     super(MoveGroupPythonIntefaceTutorial, self).__init__()
 
     ## BEGIN_SUB_TUTORIAL setup
@@ -105,8 +105,9 @@ class MoveGroupPythonIntefaceTutorial(object):
     ## If you are using a different robot, change this value to the name of your robot
     ## arm planning group.
     ## This interface can be used to plan and execute motions:
-    group_name = "panda_arm"
+    # group_name = "panda_arm"
     move_group = moveit_commander.MoveGroupCommander(group_name)
+    move_group.set_end_effector_link(eef_link)
     
     ## Create a `DisplayTrajectory`_ ROS publisher which is used to display
     ## trajectories in Rviz:
@@ -345,28 +346,34 @@ class MoveGroupPythonIntefaceTutorial(object):
 
 
   def move_gripper_to(self, width, speed=0.05):
-    assert self.gripper_move_client is not None
-    goal = franka_gripper.msg.MoveGoal(width=width, speed=speed)
-    self.gripper_move_client.send_goal(goal)
-    self.gripper_move_client.wait_for_result()
-    return self.gripper_move_client.get_result()
+    if self.gripper_move_client is not None:
+      goal = franka_gripper.msg.MoveGoal(width=width, speed=speed)
+      self.gripper_move_client.send_goal(goal)
+      self.gripper_move_client.wait_for_result()
+      return self.gripper_move_client.get_result()
+    else:
+      print "no gripper move client"
 
   def gripper_homing(self):
-    assert self.gripper_homing_client is not None
-    goal = franka_gripper.msg.HomingGoal()
-    self.gripper_homing_client.send_goal(goal)
-    self.gripper_homing_client.wait_for_result()
-    return self.gripper_homing_client.get_result()
+    if self.gripper_homing_client is not None:
+      goal = franka_gripper.msg.HomingGoal()
+      self.gripper_homing_client.send_goal(goal)
+      self.gripper_homing_client.wait_for_result()
+      return self.gripper_homing_client.get_result()
+    else:
+      print "no gripper homing client"
 
   def gripper_grasp(self, width, speed=0.05, force=10):
-    assert self.gripper_grasp_client is not None
-    epsilon = franka_gripper.msg.GraspEpsilon(inner=0.0, outer=0.01)
-    goal = franka_gripper.msg.GraspGoal(
-    width=width, speed=speed, epsilon=epsilon, force=force)
+    if self.gripper_grasp_client is not None:
+      epsilon = franka_gripper.msg.GraspEpsilon(inner=0.0, outer=0.01)
+      goal = franka_gripper.msg.GraspGoal(
+      width=width, speed=speed, epsilon=epsilon, force=force)
 
-    self.gripper_grasp_client.send_goal(goal)
-    self.gripper_grasp_client.wait_for_result()
-    return self.gripper_grasp_client.get_result()
+      self.gripper_grasp_client.send_goal(goal)
+      self.gripper_grasp_client.wait_for_result()
+      return self.gripper_grasp_client.get_result()
+    else:
+      print "no gripper grasp client"
 
   def add_box(self, timeout=4):
     # Copy class variables to local variables to make the web tutorials more clear.
